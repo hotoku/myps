@@ -104,14 +104,14 @@ fi
 
 getopts lp:P:i:a:D:Ah OPT
 case ${OPT} in
-    l) list_all_keys            ;;
-    p) copy_password ${OPTARG}  ;;
-    P) print_password ${OPTARG} ;;
-    i) print_id ${OPTARG}       ;;
-    a) add_record ${OPTARG}     ;;
-    D) delete_record ${OPTARG}  ;;
-    A) decrypt                  ;;
-    h) print_usage              ;;
+    l) list_all_keys            ; exit ;;
+    p) copy_password ${OPTARG}  ; exit ;;
+    P) print_password ${OPTARG} ; exit ;;
+    i) print_id ${OPTARG}       ; exit ;;
+    a) add_record ${OPTARG}     ; exit ;;
+    D) delete_record ${OPTARG}  ; exit ;;
+    A) decrypt                  ; exit ;;
+    h) print_usage              ; exit ;;
 esac
 
 if [ -z "$1" ]; then
