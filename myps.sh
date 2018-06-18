@@ -86,7 +86,7 @@ do_update_record(){
     key=$2
     id=$3
     pass=$4
-    decrypt | grep -v ^${num} | cat - <(echo ${num} ${key} ${id} ${pass}) | sort -k1 -n | encrypt
+    decrypt | grep -v "^${num} " | cat - <(echo ${num} ${key} ${id} ${pass}) | sort -k1 -n | encrypt
 }
 
 alert_invalid_form_exit(){
