@@ -186,6 +186,11 @@ fi
 
 
 getopts lp:P:i:I:a:u:c:D:As:gh OPT
+if [ "${OPT}" = "?" ]; then
+    print_usage
+    exit 1
+fi
+
 case ${OPT} in
     l) list_all_keys                   ; exit ;;
     p) copy_password ${OPTARG}         ; exit ;;
