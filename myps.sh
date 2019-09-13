@@ -230,7 +230,7 @@ fi
 
 
 
-if [ -z "$1" ]; then
+if [ -z "$@" ]; then
     list_all_keys
     exit 0
 fi
