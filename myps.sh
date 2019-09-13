@@ -2,7 +2,6 @@
 
 print_usage(){
     echo "Usage:"
-    echo ""
     echo "copy password"
     echo "$0 <num>"
     echo ""
