@@ -48,12 +48,23 @@ print_id(){
     decrypt | grep "^${num} " | cut -f3 -d" "
 }
 
+exit_if_empty(){
+    var="$1"
+    if [ -z "${var}" ]; then
+        exit 1
+    fi
+}
+
 add_record(){
-    key=$1
-    id=$2
-    pass=$3
-    if [ -z "${key}" ] || [ -z "${id}" ] || [ -z "${pass}" ]; then
-        alert_invalid_form_exit
+    read -p "key?: " key
+    exit_if_empty "${key}"
+
+    read -p "id?: " id
+    exit_if_empty "${id}"
+
+    read -p "password? empty -> random password: " pass
+    if [ -z "${pass}" ]; then
+        pass=$(do_generate_password)
     fi
 
     num=$(min_miss)
@@ -73,12 +84,41 @@ do_add_record(){
 }
 
 update_record(){
-    num=$1
-    key=$2
-    id=$3
-    pass=$4
-    if [ -z "${num}" ] || [ -z "${key}" ] || [ -z "${id}" ] || [ -z "${pass}" ]; then
-        alert_invalid_form_exit
+    read -p "num?: " num
+    exit_if_empty "${num}"
+
+    msg=`cat<<EOF
+what item is updated?
+1: key
+2: id
+3: password
+input: 
+EOF`
+
+    read -p "${msg}" item
+    exit_if_empty "${item}"
+
+    line=$(decrypt | grep "^${num} " | tr -d "\n")
+    exit_if_empty "${line}"
+
+    key=$(echo ${line} | cut -f2 -d" ")
+    id=$(echo ${line} | cut -f3 -d" ")
+    pass=$(echo ${line} | cut -f3 -d" ")
+
+    if [ ${item} -eq 1 ]; then
+        read -p "new key: " key
+        exit_if_empty "${key}"
+    elif [ ${item} -eq 2 ]; then
+        read -p "new id: " id
+        exit_if_empty "${id}"
+    elif [ ${item} -eq 3 ]; then
+        read -p "new password (if empty, randomly generated): " pass
+        if [ -z ${pass} ]; then
+            pass=$(do_generate_password)
+        fi
+    else
+        echo "invalid input: " ${input}
+        exit 1
     fi
 
     do_update_record "${num}" "${key}" "${id}" "${pass}"
@@ -137,7 +177,11 @@ search(){
 }
 
 generate_password(){
-    openssl rand -base64 12 | fold -w 10 | head -1 | tr -d "\n" | pbcopy
+    do_generate_password | pbcopy
+}
+
+do_generate_password(){
+    openssl rand -base64 12 | fold -w 10 | head -1 | tr -d "\n"
 }
 
 decrypt(){
@@ -185,7 +229,13 @@ fi
 
 
 
-getopts lp:P:i:I:a:u:c:D:As:gh OPT
+
+if [ -z "$1" ]; then
+    list_all_keys
+    exit 0
+fi
+
+getopts lp:P:i:I:auc:D:As:gh OPT
 if [ "${OPT}" = "?" ]; then
     print_usage
     exit 1
@@ -207,9 +257,7 @@ case ${OPT} in
     h) print_usage                     ; exit ;;
 esac
 
-if [ -z "$1" ]; then
-    list_all_keys
-elif isnum $1; then
+if isnum $1; then
     copy_password $1
 else
     search $1
