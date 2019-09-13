@@ -137,7 +137,7 @@ search(){
 }
 
 generate_password(){
-   openssl rand -base64 12 | fold -w 10 | head -1 | tr -d "\n" | pbcopy
+    openssl rand -base64 12 | fold -w 10 | head -1 | tr -d "\n" | pbcopy
 }
 
 decrypt(){
