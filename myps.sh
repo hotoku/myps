@@ -224,7 +224,7 @@ if ! [ -r ${DATAFILE} ]; then
     echo ${DATAFILE} does not exists.
     cat <<EOF
 It is necessary to create data file manually. Run the next command.
-$ echo | grep -v "^$" | gpg -e -r myps -o ${DATAFILE}
+$ echo | tr -d "\n" | gpg -e -r myps -o ${DATAFILE}
 EOF
     exit 1
 fi
