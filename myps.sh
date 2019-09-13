@@ -235,10 +235,14 @@ fi
 if [ -z "$@" ]; then
     list_all_keys
     exit 0
+elif isnum $1; then
+    copy_password $1
+    exit 0
 fi
 
-getopts lp:P:i:I:auc:D:As:gh OPT
-if [ "${OPT}" = "?" ]; then
+opt_result=$(getopts lp:P:i:I:auc:D:As:gh OPT 2>&1)
+if [ ! -z "${opt_result}" ]; then
+    echo ${opt_result}
     print_usage
     exit 1
 fi
@@ -259,8 +263,4 @@ case ${OPT} in
     h) print_usage                     ; exit ;;
 esac
 
-if isnum $1; then
-    copy_password $1
-else
-    search $1
-fi
+search $1
