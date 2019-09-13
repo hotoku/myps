@@ -1,26 +1,28 @@
 #!/bin/bash
 
 print_usage(){
-    echo "Usage:"
-    echo "copy password"
-    echo "$0 <num>"
-    echo ""
-    echo "search key"
-    echo "$0 <string>"
-    echo ""
-    echo "OPTIONS:"
-    echo "-l                       : list all keys"
-    echo "-p <num>                 : copy password"
-    echo "-P <num>                 : print password"
-    echo "-i <num>                 : copy id"
-    echo "-I <num>                 : print id"
-    echo "-a 'key id password'     : add record (Do not forget quotation!)"
-    echo "-u 'num key id password' : update record (Do not forget quotation!)"
-    echo "-c <num> <password>      : change password"
-    echo "-D <num>                 : delete record"
-    echo "-A                       : print all"
-    echo "-s <string>              : search"
-    echo "-g                       : generate password"
+cat<<EOF
+Usage:
+copy password
+$0 <num>
+
+search key
+$0 <string>
+
+OPTIONS:
+-l                  : list all keys
+-p <num>            : copy password
+-P <num>            : print password
+-i <num>            : copy id
+-I <num>            : print id
+-a                  : add record
+-u                  : update record
+-c <num> <password> : change password
+-D <num>            : delete record
+-A                  : print all
+-s <string>         : search
+-g                  : generate password
+EOF
 }
 
 list_all_keys(){
