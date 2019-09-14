@@ -238,15 +238,14 @@ if [ $# -eq 0 ]; then
 elif isnum $1; then
     copy_password $1
     exit 0
+elif [ ! "${1:0:1}" = "-" ]; then
+    search $1
+    exit 0
 fi
 
-opt_result=$(getopts lp:P:i:I:auc:D:As:gh OPT 2>&1)
-if [ ! -z "${opt_result}" ]; then
-    echo ${opt_result}
-    print_usage
-    exit 1
-fi
 
+
+getopts lp:P:i:I:auc:D:As:gh OPT
 case ${OPT} in
     l) list_all_keys                   ; exit ;;
     p) copy_password ${OPTARG}         ; exit ;;
@@ -261,6 +260,5 @@ case ${OPT} in
     s) search ${OPTARG}                ; exit ;;
     g) generate_password               ; exit ;;
     h) print_usage                     ; exit ;;
+    ?) print_usage                     ; exit ;;
 esac
-
-search $1
