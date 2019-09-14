@@ -232,7 +232,7 @@ fi
 
 
 
-if [ -z "$@" ]; then
+if [ $# -eq 0 ]; then
     list_all_keys
     exit 0
 elif isnum $1; then
