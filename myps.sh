@@ -70,7 +70,7 @@ add_record(){
     fi
 
     num=$(min_miss)
-    if [ -z "${min_miss}" ]; then
+    if [ -z "${num}" ]; then
         num=$(num_record)
         num=$(($num + 1))
     fi
