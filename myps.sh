@@ -86,7 +86,7 @@ do_add_record(){
 }
 
 update_record(){
-    read -p "num?: " num
+    num=$1
     exit_if_empty "${num}"
 
     msg=`cat<<EOF
@@ -105,7 +105,7 @@ EOF`
 
     key=$(echo ${line} | cut -f2 -d" ")
     id=$(echo ${line} | cut -f3 -d" ")
-    pass=$(echo ${line} | cut -f3 -d" ")
+    pass=$(echo ${line} | cut -f4 -d" ")
 
     if [ ${item} -eq 1 ]; then
         read -p "new key: " key
@@ -245,7 +245,7 @@ fi
 
 
 
-getopts lp:P:i:I:auc:D:As:gh OPT
+getopts lp:P:i:I:au:c:D:As:gh OPT
 case ${OPT} in
     l) list_all_keys                   ; exit ;;
     p) copy_password ${OPTARG}         ; exit ;;
