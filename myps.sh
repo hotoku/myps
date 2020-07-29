@@ -191,7 +191,7 @@ decrypt(){
 }
 
 encrypt(){
-    gpg -e -r "myps" -o ${DATAFILE}
+    gpg -e -r "myps2" -o ${DATAFILE}
 }
 
 isnum(){
