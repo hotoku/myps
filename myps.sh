@@ -1,13 +1,16 @@
 #!/bin/bash
 
+
 print_usage(){
-cat<<EOF
+    cat<<EOF
 Usage:
 copy password
 $0 <num>
 
+
 search key
 $0 <string>
+
 
 OPTIONS:
 -l                  : list all keys
@@ -25,9 +28,11 @@ OPTIONS:
 EOF
 }
 
+
 list_all_keys(){
     decrypt | cut -f1,2,3 -d" "
 }
+
 
 copy_password(){
     num=$1
@@ -35,20 +40,24 @@ copy_password(){
     decrypt | grep "^${num} " | cut -f1,2,3 -d" "
 }
 
+
 print_password(){
     num=$1
     decrypt | grep "^${num} " | cut -f4 -d" "
 }
+
 
 copy_id(){
     num=$1
     decrypt | grep "^${num} " | cut -f3 -d" " | tr -d "\n" | pbcopy
 }
 
+
 print_id(){
     num=$1
     decrypt | grep "^${num} " | cut -f3 -d" "
 }
+
 
 exit_if_empty(){
     var="$1"
@@ -57,17 +66,21 @@ exit_if_empty(){
     fi
 }
 
+
 add_record(){
     read -p "key?: " key
     exit_if_empty "${key}"
 
+
     read -p "id?: " id
     exit_if_empty "${id}"
+
 
     read -p "password? empty -> random password: " pass
     if [ -z "${pass}" ]; then
         pass=$(do_generate_password)
     fi
+
 
     num=$(min_miss)
     if [ -z "${num}" ]; then
@@ -77,6 +90,7 @@ add_record(){
     do_add_record "${num}" "${key}" "${id}" "${pass}"
 }
 
+
 do_add_record(){
     num=$1
     key=$2
@@ -85,27 +99,33 @@ do_add_record(){
     decrypt | cat - <(echo "${num}" "${key}" "${id}" "${pass}") | sort -k1 -n | encrypt
 }
 
+
 update_record(){
     num=$1
     exit_if_empty "${num}"
+
 
     msg=`cat<<EOF
 what item is updated?
 1: key
 2: id
 3: password
-input: 
+input:
 EOF`
+
 
     read -p "${msg}" item
     exit_if_empty "${item}"
 
+
     line=$(decrypt | grep "^${num} " | tr -d "\n")
     exit_if_empty "${line}"
+
 
     key=$(echo ${line} | cut -f2 -d" ")
     id=$(echo ${line} | cut -f3 -d" ")
     pass=$(echo ${line} | cut -f4 -d" ")
+
 
     if [ ${item} -eq 1 ]; then
         read -p "new key: " key
@@ -123,8 +143,10 @@ EOF`
         exit 1
     fi
 
+
     do_update_record "${num}" "${key}" "${id}" "${pass}"
 }
+
 
 do_update_record(){
     num=$1
@@ -133,6 +155,7 @@ do_update_record(){
     pass=$4
     decrypt | grep -v "^${num} " | cat - <(echo ${num} ${key} ${id} ${pass}) | sort -k1 -n | encrypt
 }
+
 
 change_password(){
     num=$1
@@ -146,20 +169,23 @@ change_password(){
     update_record "${num}" "${key}" "${id}" "${pass}"
 }
 
+
 alert_invalid_form_exit(){
     echo "invalid form"
     print_usage
     exit 1
 }
 
+
 delete_record(){
     num=$1
     if [ -z "${num}" ]; then
         echo "num is empty"
-        exit 1        
+        exit 1
     fi
     do_delete_record ${num}
 }
+
 
 do_delete_record(){
     num=$1
@@ -168,31 +194,38 @@ do_delete_record(){
     decrypt | grep -v "^${num} " | encrypt
 }
 
+
 search(){
     key=$1
-    decrypt | cut -f1,2,3 -d" " | grep "${key}"
+    decrypt | cut -f1,2,3 -d" " | grep -E "${key}"
 
-    ids=($(decrypt | cut -f1,2,3 -d" " | grep "${key}" | cut -f1 -d" "))
+
+    ids=($(decrypt | cut -f1,2,3 -d" " | grep -E "${key}" | cut -f1 -d" "))
     if [ ${#ids[@]} = 1 ]; then
         copy_password ${ids[0]} > /dev/null
     fi
 }
 
+
 generate_password(){
     do_generate_password | pbcopy
 }
+
 
 do_generate_password(){
     openssl rand -base64 12 | fold -w 10 | head -1 | tr -d "\n"
 }
 
+
 decrypt(){
     gpg --decrypt ${DATAFILE} 2> /dev/null
 }
 
+
 encrypt(){
     gpg -e -r "myps2" -o ${DATAFILE}
 }
+
 
 isnum(){
     str=$1
@@ -201,24 +234,29 @@ isnum(){
     test ${ret} -lt 2
 }
 
+
 min_miss(){
     decrypt | awk 'NR!=$1{print NR; exit}'
 }
 
+
 num_record(){
     decrypt | wc -l
 }
+
 
 if ! [ -r ~/.myps ]; then
     echo "missing ~/.myps file"
     exit 1
 fi
 
+
 source ~/.myps
 if [ -z ${DATAFILE} ]; then
     echo "variable 'DATAFILE' is not defined"
     exit 1
 fi
+
 
 if ! [ -r ${DATAFILE} ]; then
     echo ${DATAFILE} does not exists.
@@ -228,8 +266,6 @@ $ echo | tr -d "\n" | gpg -e -r myps -o ${DATAFILE}
 EOF
     exit 1
 fi
-
-
 
 
 if [ $# -eq 0 ]; then
@@ -242,7 +278,6 @@ elif [ ! "${1:0:1}" = "-" ]; then
     search $1
     exit 0
 fi
-
 
 
 getopts lp:P:i:I:au:c:D:As:gh OPT
