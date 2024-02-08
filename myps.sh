@@ -29,6 +29,13 @@ EOF
 }
 
 
+
+if type pbcopy > /dev/null 2>&1; then
+    COPY_COMMAND="pbcopy"
+else
+    COPY_COMMAND="clip.exe"
+fi
+
 list_all_keys(){
     decrypt | cut -f1,2,3 -d" "
 }
@@ -36,7 +43,7 @@ list_all_keys(){
 
 copy_password(){
     num=$1
-    decrypt | grep "^${num} " | cut -f4 -d" " | tr -d "\n" | pbcopy
+    decrypt | grep "^${num} " | cut -f4 -d" " | tr -d "\n" | ${COPY_COMMAND}
     decrypt | grep "^${num} " | cut -f1,2,3 -d" "
 }
 
@@ -49,7 +56,7 @@ print_password(){
 
 copy_id(){
     num=$1
-    decrypt | grep "^${num} " | cut -f3 -d" " | tr -d "\n" | pbcopy
+    decrypt | grep "^${num} " | cut -f3 -d" " | tr -d "\n" | ${COPY_COMMAND}
 }
 
 
@@ -189,7 +196,7 @@ delete_record(){
 
 do_delete_record(){
     num=$1
-    decrypt | grep "^${num} " | tr -d "\n" | pbcopy
+    decrypt | grep "^${num} " | tr -d "\n" | ${COPY_COMMAND}
     echo "the record for '${num}' is copied in clipboard"
     decrypt | grep -v "^${num} " | encrypt
 }
@@ -208,7 +215,7 @@ search(){
 
 
 generate_password(){
-    do_generate_password | pbcopy
+    do_generate_password | ${COPY_COMMAND}
 }
 
 
