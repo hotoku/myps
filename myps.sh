@@ -17,7 +17,6 @@ OPTIONS:
 -p <num>            : copy password
 -P <num>            : print password
 -i <num>            : copy id
--I <num>            : print id
 -a                  : add record
 -u                  : update record
 -c <num> <password> : change password
@@ -29,12 +28,12 @@ EOF
 }
 
 
-
 if type pbcopy > /dev/null 2>&1; then
     COPY_COMMAND="pbcopy"
 else
     COPY_COMMAND="clip.exe"
 fi
+
 
 list_all_keys(){
     decrypt | cut -f1,2,3 -d" "
@@ -50,19 +49,16 @@ copy_password(){
 
 print_password(){
     num=$1
-    decrypt | grep "^${num} " | cut -f4 -d" "
+    local passwd=$(decrypt | grep "^${num} " | cut -f4 -d" ")
+    echo ${passwd} | ${COPY_COMMAND}
+    echo ${passwd}
 }
 
 
 copy_id(){
     num=$1
-    decrypt | grep "^${num} " | cut -f3 -d" " | tr -d "\n" | ${COPY_COMMAND}
-}
-
-
-print_id(){
-    num=$1
     decrypt | grep "^${num} " | cut -f3 -d" "
+    decrypt | grep "^${num} " | cut -f3 -d" " | tr -d "\n" | ${COPY_COMMAND}
 }
 
 
@@ -293,7 +289,6 @@ case ${OPT} in
     p) copy_password ${OPTARG}         ; exit ;;
     P) print_password ${OPTARG}        ; exit ;;
     i) copy_id ${OPTARG}               ; exit ;;
-    I) print_id ${OPTARG}              ; exit ;;
     a) add_record ${OPTARG}            ; exit ;;
     u) update_record ${OPTARG}         ; exit ;;
     c) shift 1; change_password "$@"   ; exit ;; # -cを捨てている
