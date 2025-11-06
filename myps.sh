@@ -216,7 +216,7 @@ generate_password(){
 
 
 do_generate_password(){
-    openssl rand -base64 12 | fold -w 10 | head -1 | tr -d "\n"
+    openssl rand -base64 12 | fold -w 15 | head -1 | tr -d "\n"
 }
 
 
